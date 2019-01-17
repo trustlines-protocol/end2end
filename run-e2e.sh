@@ -25,5 +25,5 @@ mydir=$(mktemp -td end2end.XXXXXX)
 docker-compose logs -t e2e >$mydir/output.txt
 docker-compose down -v
 cat $mydir/output.txt
-echo rm -r $mydir
+rm -r $mydir
 exit $result
