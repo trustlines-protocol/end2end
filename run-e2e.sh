@@ -3,6 +3,9 @@
 set -x
 set -u
 
+DIR=$(dirname $(realpath ${BASH_SOURCE[0]}))
+cd $DIR
+
 # source .env in case we have the environment variables set locally
 source .env
 
