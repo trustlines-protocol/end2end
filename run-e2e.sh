@@ -3,8 +3,17 @@
 set -x
 set -u
 
+function cleanup()
+{
+    docker-compose down -v
+    rm -r $mydir
+}
+
 DIR=$(dirname $(realpath ${BASH_SOURCE[0]}))
 cd $DIR
+mydir=$(mktemp -td end2end.XXXXXX)
+trap "cleanup" EXIT
+trap "exit 1" SIGINT SIGTERM
 
 # source .env in case we have the environment variables set locally
 source .env
@@ -24,9 +33,7 @@ sleep 3
 docker-compose up -d e2e
 docker-compose logs -t -f parity index relay e2e &
 result=$(docker wait e2e)
-mydir=$(mktemp -td end2end.XXXXXX)
+
 docker-compose logs -t e2e >$mydir/output.txt
-docker-compose down -v
 cat $mydir/output.txt
-rm -r $mydir
 exit $result
