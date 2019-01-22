@@ -1,16 +1,43 @@
 #! /bin/bash
 
-set -x
 set -u
+
+function die()
+{
+    echo $1
+    exit 1
+}
+
+OPTIND=1         # Reset in case getopts has been used previously in the shell.
+cwd=$(pwd)
+# Initialize our own variables:
+use_local_yarn=0
+pull=0
+while getopts "lp" opt; do
+    case "$opt" in
+        l)  use_local_yarn=1
+            test -e src/Trustline.ts || die "run-e2e.sh: local test runs must be started from the clientlib repository"
+            ;;
+        p)  pull=1
+            ;;
+    esac
+done
+
+set -x
 
 function cleanup()
 {
+    cd $E2E_DIR
     docker-compose down -v
     rm -r $mydir
 }
 
-DIR=$(dirname $(realpath ${BASH_SOURCE[0]}))
-cd $DIR
+E2E_DIR=$(dirname $(realpath ${BASH_SOURCE[0]}))
+cd $E2E_DIR
+if test $pull -eq 1; then
+    docker-compose pull
+fi
+
 mydir=$(mktemp -td end2end.XXXXXX)
 trap "cleanup" EXIT
 trap "exit 1" SIGINT SIGTERM
@@ -30,10 +57,17 @@ docker-compose up createtables
 docker-compose up init
 docker-compose up -d index relay
 sleep 3
-docker-compose up -d e2e
 docker-compose logs -t -f parity index relay e2e &
-result=$(docker wait e2e)
 
-docker-compose logs -t e2e >$mydir/output.txt
+if test $use_local_yarn -eq 0; then
+    docker-compose up -d e2e
+    result=$(docker wait e2e)
+    docker-compose logs -t e2e >$mydir/output.txt
+else
+    cd $cwd
+    yarn run test:e2e | tee $mydir/output.txt
+    result="${PIPESTATUS[0]}"
+fi
+
 cat $mydir/output.txt
 exit $result
