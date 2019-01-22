@@ -5,11 +5,19 @@ inside docker.
 
 This is a bit experimental.as it relies on a manually updated trustlines/e2e docker image.
 
+## Installation
+
+Please use a git checkout of the repo, either call the run-e2e.sh script with a
+full path or put a symlink to the run-e2e.sh script into your PATH. The
+following assumes you have put a symlink into your PATH.
+
+Do not copy the script itself to PATH, it will not work.
+
 ## Running the tests
 
 Just call
 
-    ./run-e2e.sh
+    run-e2e.sh
 
 to start running the tests.
 
@@ -32,4 +40,4 @@ root folder to start with this option:
 
     cd /path/to/clientlib
     yarn install
-    /path/to/end2end/run-e2e.sh -l
+    run-e2e.sh -l
