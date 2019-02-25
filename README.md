@@ -3,11 +3,13 @@
 This directory contains the files needed to run the clientlib's end2end tests
 inside docker.
 
-This is a bit experimental.as it relies on a manually updated trustlines/e2e docker image.
+This script uses the [trustlines/e2e docker
+image](https://hub.docker.com/r/trustlines/e2e/tags), which is automatically
+being build from the clientlib repository.
 
 ## Installation
 
-Please use a git checkout of the repo, either call the run-e2e.sh script with a
+Please use a git checkout of the repo, either call the `run-e2e.sh` script with a
 full path or put a symlink to the run-e2e.sh script into your PATH. The
 following assumes you have put a symlink into your PATH.
 
