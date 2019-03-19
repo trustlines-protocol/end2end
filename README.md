@@ -10,10 +10,10 @@ being build from the clientlib repository.
 ## Installation
 
 Please use a git checkout of the repo, either call the `run-e2e.sh` script with a
-full path or put a symlink to the run-e2e.sh script into your PATH. The
-following assumes you have put a symlink into your PATH.
+full path or put a symlink to the `run-e2e.sh` script into your `PATH`. The
+following assumes you have put a symlink into your `PATH`.
 
-Do not copy the script itself to PATH, it will not work.
+Do not copy the script itself to `PATH`, it will not work.
 
 ## Running the tests
 
@@ -36,7 +36,7 @@ Just build and tag the image locally. For the relay server this looks like
 
 ## Running the end2end tests locally
 
-The '-l' option starts tests locally via yarn. The relay server, parity and
+The `-l` option starts tests locally via yarn. The relay server, parity and
 postgres are still being run via docker-compose. You must be in the clientlib's
 root folder to start with this option:
 
