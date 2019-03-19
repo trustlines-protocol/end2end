@@ -7,5 +7,6 @@
   },
   "syncInterval": 300,
   "updateNetworksInterval": 5,
-  "enableEtherFaucet": true
+  "enableEtherFaucet": true,
+  "enableDeployIdentity": true
 }
