@@ -8,5 +8,6 @@
   "syncInterval": 300,
   "updateNetworksInterval": 5,
   "enableEtherFaucet": true,
-  "enableDeployIdentity": true
+  "enableDeployIdentity": true,
+  "enableRelayMetaTransaction": true
 }
