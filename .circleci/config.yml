@@ -1,0 +1,69 @@
+version: 2.1
+
+executors:
+  ubuntu-builder:
+    docker:
+      - image: trustlines/builder:master14
+    working_directory: ~/repo
+
+# define some common commands
+# see https://circleci.com/docs/2.0/configuration-reference/#commands-requires-version-21
+commands:
+  install-pre-commit:
+    description: "install pre-commit with pispi"
+    steps:
+      - run:
+          name: pipsi install pre-commit
+          command: |
+            test -e ~/.local/bin/pre-commit || pipsi install pre-commit
+
+  config-path:
+    description: "set environment variables and change PATH"
+    steps:
+    - run:
+        name: Configuring PATH
+        command: |
+          echo 'export PATH=~/bin:~/.local/bin:${PATH}' >> ${BASH_ENV}
+
+jobs:
+  run-pre-commit:
+    executor: ubuntu-builder
+    steps:
+      - checkout
+      - config-path
+      - restore_cache:
+          key: pre-commit-v2-{{ checksum ".pre-commit-config.yaml" }}
+      - install-pre-commit
+      - run:
+          name: setup pre-commit hook environments
+          command: |
+            pre-commit install-hooks
+      - save_cache:
+          key: pre-commit-v2-{{ checksum ".pre-commit-config.yaml" }}
+          paths:
+            - ~/.cache/pre-commit
+            - ~/.local/bin
+            - ~/.local/venvs/pre-commit
+      - run:
+          name: run pre-commit
+          command: |
+            pre-commit run -a
+  run-end2end-tests:
+    executor: ubuntu-builder
+    working_directory: ~/repo
+    steps:
+      - setup_remote_docker
+      - checkout
+      - config-path
+      - run:
+          name: run end2end tests
+          command: |
+            ./run-e2e.sh
+
+
+workflows:
+  version: 2
+  default:
+    jobs:
+      - run-pre-commit
+      - run-end2end-tests
