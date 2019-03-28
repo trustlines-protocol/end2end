@@ -1,5 +1,7 @@
 #! /bin/bash
 
+NYC_OUTPUT_DIR=.nyc_output
+
 set -u
 
 function die()
@@ -13,12 +15,15 @@ cwd=$(pwd)
 # Initialize our own variables:
 use_local_yarn=0
 pull=0
-while getopts "lp" opt; do
+coverage=0
+while getopts "lpc" opt; do
     case "$opt" in
         l)  use_local_yarn=1
             test -e src/Trustline.ts || die "run-e2e.sh: local test runs must be started from the clientlib repository"
             ;;
         p)  pull=1
+            ;;
+        c)  coverage=1
             ;;
     esac
 done
@@ -63,11 +68,15 @@ if test $use_local_yarn -eq 0; then
     docker-compose up -d e2e
     result=$(docker wait e2e)
     docker-compose logs -t e2e >$mydir/output.txt
+    cd $cwd
+    if test $coverage -eq 1; then
+        rm -rf "$NYC_OUTPUT_DIR"
+        docker cp e2e:/clientlib/"$NYC_OUTPUT_DIR"/. "$NYC_OUTPUT_DIR"
+    fi
 else
     cd $cwd
     yarn run test:e2e | tee $mydir/output.txt
     result="${PIPESTATUS[0]}"
 fi
-
 cat $mydir/output.txt
 exit $result
