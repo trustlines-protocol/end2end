@@ -43,3 +43,8 @@ root folder to start with this option:
     cd /path/to/clientlib
     yarn install
     run-e2e.sh -l
+
+## Running only the backend
+
+If you only want to run the backend without automatically running the e2e tests,
+use the option `-b`. This can be used for running the e2e tests manually.

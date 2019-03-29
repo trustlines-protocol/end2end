@@ -16,7 +16,8 @@ cwd=$(pwd)
 use_local_yarn=0
 pull=0
 coverage=0
-while getopts "lpc" opt; do
+only_backend=0
+while getopts "lpb" opt; do
     case "$opt" in
         l)  use_local_yarn=1
             test -e src/Trustline.ts || die "run-e2e.sh: local test runs must be started from the clientlib repository"
@@ -24,6 +25,8 @@ while getopts "lpc" opt; do
         p)  pull=1
             ;;
         c)  coverage=1
+        b)  only_backend=1
+            echo "ONLY BACKEND"
             ;;
     esac
 done
@@ -62,21 +65,25 @@ docker-compose up createtables
 docker-compose up init
 docker-compose up -d index relay
 sleep 3
-docker-compose logs -t -f parity index relay e2e &
 
-if test $use_local_yarn -eq 0; then
-    docker-compose up -d e2e
-    result=$(docker wait e2e)
-    docker-compose logs -t e2e >$mydir/output.txt
-    cd $cwd
-    if test $coverage -eq 1; then
-        rm -rf "$NYC_OUTPUT_DIR"
-        docker cp e2e:/clientlib/"$NYC_OUTPUT_DIR"/. "$NYC_OUTPUT_DIR"
+if test $only_backend -eq 0; then
+    docker-compose logs -t -f parity index relay e2e &
+    if test $use_local_yarn -eq 0; then
+        docker-compose up -d e2e
+        result=$(docker wait e2e)
+        docker-compose logs -t e2e >$mydir/output.txt
+        cd $cwd
+        if test $coverage -eq 1; then
+            rm -rf "$NYC_OUTPUT_DIR"
+            docker cp e2e:/clientlib/"$NYC_OUTPUT_DIR"/. "$NYC_OUTPUT_DIR"
+        fi
+    else
+        cd $cwd
+        yarn run test:e2e | tee $mydir/output.txt
+        result="${PIPESTATUS[0]}"
     fi
+    cat $mydir/output.txt
+    exit $result
 else
-    cd $cwd
-    yarn run test:e2e | tee $mydir/output.txt
-    result="${PIPESTATUS[0]}"
+    docker-compose logs -t -f parity index relay
 fi
-cat $mydir/output.txt
-exit $result
