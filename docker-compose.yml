@@ -96,6 +96,8 @@ services:
       - internal
     expose:
       - "8545"
+    ports:
+      - "127.0.0.1:8545:8545"
     volumes:
       - shared:/shared
     command: >

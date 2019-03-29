@@ -17,7 +17,7 @@ use_local_yarn=0
 pull=0
 coverage=0
 only_backend=0
-while getopts "lpb" opt; do
+while getopts "lpcb" opt; do
     case "$opt" in
         l)  use_local_yarn=1
             test -e src/Trustline.ts || die "run-e2e.sh: local test runs must be started from the clientlib repository"
@@ -26,7 +26,6 @@ while getopts "lpb" opt; do
             ;;
         c)  coverage=1
         b)  only_backend=1
-            echo "ONLY BACKEND"
             ;;
     esac
 done
