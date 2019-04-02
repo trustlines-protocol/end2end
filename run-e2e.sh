@@ -31,7 +31,16 @@ while getopts "lpcb" opt; do
     esac
 done
 
-set -x
+
+# Makes the bash script to print out every command before it is executed except echo
+# this is a replacement for 'set -x'
+function preexec ()
+{
+    [[ $BASH_COMMAND != echo* ]] && echo >&2 "+ $BASH_COMMAND"
+}
+set -o functrace   # run DEBUG trap in subshells
+trap preexec DEBUG
+
 
 function cleanup()
 {
@@ -64,9 +73,9 @@ docker-compose up contracts
 docker-compose up createtables
 docker-compose up init
 docker-compose up -d index relay
-sleep 3
 
 if test $only_backend -eq 0; then
+    sleep 3
     docker-compose logs -t -f parity index relay e2e &
     if test $use_local_yarn -eq 0; then
         docker-compose up -d e2e
@@ -85,5 +94,14 @@ if test $only_backend -eq 0; then
     cat $mydir/output.txt
     exit $result
 else
+    echo
+    echo "====================================================="
+    echo "Initialization is complete."
+    echo "You've started the script with the -b flag."
+    echo "You can now run your tests manually."
+    echo "Hit Ctrl-C when done."
+    echo "====================================================="
+    echo
+    sleep 5
     docker-compose logs -t -f parity index relay
 fi
