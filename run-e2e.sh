@@ -25,6 +25,7 @@ while getopts "lpcb" opt; do
         p)  pull=1
             ;;
         c)  coverage=1
+            ;;
         b)  only_backend=1
             ;;
     esac
