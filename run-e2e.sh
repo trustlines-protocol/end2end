@@ -16,7 +16,8 @@ cwd=$(pwd)
 use_local_yarn=0
 pull=0
 coverage=0
-while getopts "lpc" opt; do
+only_backend=0
+while getopts "lpcb" opt; do
     case "$opt" in
         l)  use_local_yarn=1
             test -e src/Trustline.ts || die "run-e2e.sh: local test runs must be started from the clientlib repository"
@@ -25,10 +26,21 @@ while getopts "lpc" opt; do
             ;;
         c)  coverage=1
             ;;
+        b)  only_backend=1
+            ;;
     esac
 done
 
-set -x
+
+# Makes the bash script to print out every command before it is executed except echo
+# this is a replacement for 'set -x'
+function preexec ()
+{
+    [[ $BASH_COMMAND != echo* ]] && echo >&2 "+ $BASH_COMMAND"
+}
+set -o functrace   # run DEBUG trap in subshells
+trap preexec DEBUG
+
 
 function cleanup()
 {
@@ -61,22 +73,35 @@ docker-compose up contracts
 docker-compose up createtables
 docker-compose up init
 docker-compose up -d index relay
-sleep 3
-docker-compose logs -t -f parity index relay e2e &
 
-if test $use_local_yarn -eq 0; then
-    docker-compose up -d e2e
-    result=$(docker wait e2e)
-    docker-compose logs -t e2e >$mydir/output.txt
-    cd $cwd
-    if test $coverage -eq 1; then
-        rm -rf "$NYC_OUTPUT_DIR"
-        docker cp e2e:/clientlib/"$NYC_OUTPUT_DIR"/. "$NYC_OUTPUT_DIR"
+if test $only_backend -eq 0; then
+    sleep 3
+    docker-compose logs -t -f parity index relay e2e &
+    if test $use_local_yarn -eq 0; then
+        docker-compose up -d e2e
+        result=$(docker wait e2e)
+        docker-compose logs -t e2e >$mydir/output.txt
+        cd $cwd
+        if test $coverage -eq 1; then
+            rm -rf "$NYC_OUTPUT_DIR"
+            docker cp e2e:/clientlib/"$NYC_OUTPUT_DIR"/. "$NYC_OUTPUT_DIR"
+        fi
+    else
+        cd $cwd
+        yarn run test:e2e | tee $mydir/output.txt
+        result="${PIPESTATUS[0]}"
     fi
+    cat $mydir/output.txt
+    exit $result
 else
-    cd $cwd
-    yarn run test:e2e | tee $mydir/output.txt
-    result="${PIPESTATUS[0]}"
+    echo
+    echo "====================================================="
+    echo "Initialization is complete."
+    echo "You've started the script with the -b flag."
+    echo "You can now run your tests manually."
+    echo "Hit Ctrl-C when done."
+    echo "====================================================="
+    echo
+    sleep 5
+    docker-compose logs -t -f parity index relay
 fi
-cat $mydir/output.txt
-exit $result
