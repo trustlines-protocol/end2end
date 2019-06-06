@@ -79,7 +79,15 @@ if test $only_backend -eq 0; then
     docker-compose logs -t -f parity index relay e2e &
     if test $use_local_yarn -eq 0; then
         docker-compose up -d e2e
-        result=$(docker wait e2e)
+        docker_wait_output=$(docker wait e2e)
+        case $docker_wait_output in
+            [0-9]*)
+                result=$docker_wait_output
+                ;;
+            *)
+                result=1
+                ;;
+        esac
         docker-compose logs -t e2e >$mydir/output.txt
         cd $cwd
         if test $coverage -eq 1; then
