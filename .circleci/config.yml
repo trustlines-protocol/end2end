@@ -3,7 +3,7 @@ version: 2.1
 executors:
   ubuntu-builder:
     docker:
-      - image: trustlines/builder:master14
+      - image: trustlines/builder:master25
     working_directory: ~/repo
 
 # define some common commands
