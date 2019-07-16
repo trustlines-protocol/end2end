@@ -22,3 +22,4 @@ repos:
   rev: 1edc6d3ab9380e17eb01a601551283cf7bc23f2b
   hooks:
     - id: shfmt
+    - id: shellcheck

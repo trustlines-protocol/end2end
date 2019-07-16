@@ -5,7 +5,7 @@ NYC_OUTPUT_DIR=.nyc_output
 set -u
 
 function die() {
-  echo $1
+  echo "$1"
   exit 1
 }
 
@@ -20,7 +20,7 @@ while getopts "lpcb" opt; do
   case "$opt" in
   l)
     use_local_yarn=1
-    test -e src/Trustline.ts || die "run-e2e.sh: local test runs must be started from the clientlib repository"
+    [[ -e src/Trustline.ts ]] || die "run-e2e.sh: local test runs must be started from the clientlib repository"
     ;;
   p)
     pull=1
@@ -37,20 +37,20 @@ done
 # Makes the bash script to print out every command before it is executed except echo
 # this is a replacement for 'set -x'
 function preexec() {
-  [[ $BASH_COMMAND != echo* ]] && echo >&2 "+ $BASH_COMMAND"
+  [[ ${BASH_COMMAND} != echo* ]] && echo >&2 "+ ${BASH_COMMAND}"
 }
 set -o functrace # run DEBUG trap in subshells
 trap preexec DEBUG
 
 function cleanup() {
-  cd $E2E_DIR
+  cd "${E2E_DIR}" || die "cd failed"
   docker-compose down -v
-  rm -r $mydir
+  rm -r "${mydir}"
 }
 
-E2E_DIR=$(dirname $(realpath ${BASH_SOURCE[0]}))
-cd $E2E_DIR
-if test $pull -eq 1; then
+E2E_DIR=$(dirname "$(realpath "${BASH_SOURCE[0]}")")
+cd "${E2E_DIR}" || die "cd failed"
+if [[ ${pull} -eq 1 ]]; then
   docker-compose pull
 fi
 
@@ -58,8 +58,8 @@ mydir=$(mktemp -td end2end.XXXXXX)
 trap "cleanup" EXIT
 trap "exit 1" SIGINT SIGTERM
 
-# source .env in case we have the environment variables set locally
-source .env
+# unset environment variables set in .env, otherwise we overwrite .env
+unset PGHOST PGUSER POSTGRES_USER PGDATABASE PGPASSWORD POSTGRES_PASSWORD
 
 docker-compose up --no-start
 docker-compose up helper
@@ -73,33 +73,33 @@ docker-compose up createtables
 docker-compose up init
 docker-compose up -d index relay
 
-if test $only_backend -eq 0; then
+if [[ ${only_backend} -eq 0 ]]; then
   sleep 3
   docker-compose logs -t -f parity index relay e2e &
-  if test $use_local_yarn -eq 0; then
+  if [[ ${use_local_yarn} -eq 0 ]]; then
     docker-compose up -d e2e
     docker_wait_output=$(docker wait e2e)
-    case $docker_wait_output in
+    case ${docker_wait_output} in
     [0-9]*)
-      result=$docker_wait_output
+      result=${docker_wait_output}
       ;;
     *)
       result=1
       ;;
     esac
-    docker-compose logs -t e2e >$mydir/output.txt
-    cd $cwd
-    if test $coverage -eq 1; then
-      rm -rf "$NYC_OUTPUT_DIR"
-      docker cp e2e:/clientlib/"$NYC_OUTPUT_DIR"/. "$NYC_OUTPUT_DIR"
+    docker-compose logs -t e2e >"${mydir}/output.txt"
+    cd "${cwd}" || die "cd failed"
+    if [[ ${coverage} -eq 1 ]]; then
+      rm -rf "${NYC_OUTPUT_DIR}"
+      docker cp e2e:/clientlib/"${NYC_OUTPUT_DIR}"/. "${NYC_OUTPUT_DIR}"
     fi
   else
-    cd $cwd
-    yarn run test:e2e | tee $mydir/output.txt
+    cd "${cwd}" || die "cd failed"
+    yarn run test:e2e | tee "${mydir}/output.txt"
     result="${PIPESTATUS[0]}"
   fi
-  cat $mydir/output.txt
-  exit $result
+  cat "${mydir}/output.txt"
+  exit "${result}"
 else
   echo
   echo "====================================================="
