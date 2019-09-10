@@ -6,16 +6,13 @@ repos:
     rev: v2.3.0
     hooks:
     - id: check-added-large-files
-    - id: check-ast
     - id: check-byte-order-marker
     - id: check-case-conflict
     - id: check-json
     - id: check-merge-conflict
     - id: check-yaml
-    - id: debug-statements
     - id: end-of-file-fixer
       exclude: parity-dev-pw
-    - id: flake8
     - id: trailing-whitespace
 
 - repo: https://github.com/trustlines-protocol/more-pre-commit-hooks.git
