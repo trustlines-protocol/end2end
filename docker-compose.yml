@@ -106,6 +106,11 @@ services:
       --jsonrpc-interface=0.0.0.0
       --unlock=0x00a329c0648769a73afac7f9381e08fb43dbea72
       --password=/shared/parity-dev-pw
+      --jsonrpc-server-threads=8
+
+    # Passing the --jsonrpc-server-threads argument above made the
+    # bridge end2end tests work, see
+    # https://github.com/trustlines-protocol/blockchain/commit/c821f16c3ec9f54e15fa89f4c8dae6ffa64ded01
 
   contracts:
     image: trustlines/contracts
