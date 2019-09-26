@@ -89,7 +89,7 @@ services:
       - internal
 
   parity:
-    image: parity/parity:v2.4.6
+    image: parity/parity:v2.6.3-beta
     container_name: parity
     restart: unless-stopped
     networks:
