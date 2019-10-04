@@ -134,6 +134,8 @@ services:
       - internal
     links:
       - "relay"
+    volumes:
+      - shared:/clientlib/tests/e2e-config
 
 networks:
   internal:

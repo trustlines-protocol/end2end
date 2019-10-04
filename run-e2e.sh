@@ -95,6 +95,8 @@ if [[ ${only_backend} -eq 0 ]]; then
     fi
   else
     cd "${cwd}" || die "cd failed"
+    # Copies the file addresses.json in the shared volume to the local directory cwd/tests/e2e-config
+    docker run --rm -v ($PWD)/tests/e2e-config:/dest -v end2end_shared:/source -w /source alpine cp addresses.json /dest
     yarn run test:e2e | tee "${mydir}/output.txt"
     result="${PIPESTATUS[0]}"
   fi
