@@ -58,7 +58,6 @@ mydir=$(mktemp -td end2end.XXXXXX)
 trap "cleanup" EXIT
 trap "exit 1" SIGINT SIGTERM
 
-#test
 # unset environment variables set in .env, otherwise we overwrite .env
 unset PGHOST PGUSER POSTGRES_USER PGDATABASE PGPASSWORD POSTGRES_PASSWORD
 
@@ -97,7 +96,7 @@ if [[ ${only_backend} -eq 0 ]]; then
   else
     cd "${cwd}" || die "cd failed"
     # Copies the file addresses.json in the shared volume to the local directory cwd/tests/e2e-config
-    docker run --rm -v $PWD/tests/e2e-config:/dest -v end2end_shared:/source -w /source alpine cp addresses.json /dest
+    docker run --rm -v "$PWD"/tests/e2e-config:/dest -v end2end_shared:/source -w /source alpine cp addresses.json /dest
     yarn run test:e2e | tee "${mydir}/output.txt"
     result="${PIPESTATUS[0]}"
   fi
