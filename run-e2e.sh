@@ -63,12 +63,26 @@ unset PGHOST PGUSER POSTGRES_USER PGDATABASE PGPASSWORD POSTGRES_PASSWORD
 
 docker-compose up --no-start
 docker-compose up helper
-docker cp config.json e2e-helper:/shared
 docker cp parity-dev-pw e2e-helper:/shared
 docker-compose up -d postgres parity
 
 sleep 5
 docker-compose up contracts
+
+# copies the addresses.json file out to get a contract's address in the relay's config.toml
+docker run --rm -v "$PWD":/dest -v end2end_shared:/source -w /source alpine cp addresses.json /dest
+
+relay_config=config.toml
+address_file=addresses.json
+
+first_network_address=$(sed --regexp-extended 's/\{"networks": \["(0x[0-9,a-f,A-F]+)".*/\1/' $address_file)
+
+sed --in-place --expression \
+  "s/^\(currencyNetwork\s*=\s*\)\".*\".*/\1\"$first_network_address\"/" \
+  "$relay_config"
+rm -f $address_file
+
+docker cp config.toml e2e-helper:/shared
 docker-compose up createtables
 docker-compose up init
 docker-compose up -d index relay
