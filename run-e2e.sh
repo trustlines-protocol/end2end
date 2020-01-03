@@ -77,9 +77,24 @@ address_file=addresses.json
 
 first_network_address=$(sed --regexp-extended 's/\{"networks": \["(0x[0-9,a-f,A-F]+)".*/\1/' $address_file)
 
-sed --in-place --expression \
-  "s/^\(currencyNetwork\s*=\s*\)\".*\".*/\1\"$first_network_address\"/" \
-  "$relay_config"
+cat >${relay_config} <<EOF
+[relay]
+syncInterval = 300
+updateNetworksInterval = 5
+enableEtherFaucet = true
+enableRelayMetaTransaction = true
+enableDeployIdentity = true
+
+[relay.rpc]
+host = "node"
+port = 8545
+ssl = false
+
+[[relay.delegationFees]]
+value = 1
+currencyNetwork = "${first_network_address}"
+EOF
+
 rm -f $address_file
 
 docker cp config.toml e2e-helper:/shared
