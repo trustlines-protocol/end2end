@@ -70,7 +70,7 @@ sleep 5
 docker-compose up contracts
 
 # copies the addresses.json file out to get a contract's address in the relay's config.toml
-docker run --rm -v "$PWD":/dest -v end2end_shared:/source -w /source alpine cp addresses.json /dest
+docker cp e2e-helper:/shared/addresses.json .
 
 relay_config=config.toml
 address_file=addresses.json
@@ -125,7 +125,7 @@ if [[ ${only_backend} -eq 0 ]]; then
   else
     cd "${cwd}" || die "cd failed"
     # Copies the file addresses.json in the shared volume to the local directory cwd/tests/e2e-config
-    docker run --rm -v "$PWD"/tests/e2e-config:/dest -v end2end_shared:/source -w /source alpine cp addresses.json /dest
+    docker cp e2e-helper:/shared/addresses.json "$PWD"/tests/e2e-config/
     yarn run test:e2e | tee "${mydir}/output.txt"
     result="${PIPESTATUS[0]}"
   fi
