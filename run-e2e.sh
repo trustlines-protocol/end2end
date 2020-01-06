@@ -31,6 +31,10 @@ while getopts "lpcb" opt; do
   b)
     only_backend=1
     ;;
+  *)
+    # illegal option case; getopt already shows an error message
+    exit 1
+    ;;
   esac
 done
 
