@@ -95,8 +95,8 @@ port = 8545
 ssl = false
 
 [[relay.delegationFees]]
-value = 1
-currencyNetwork = "${first_network_address}"
+baseFee = 1
+currencyNetworkOfFees = "${first_network_address}"
 EOF
 
 rm -f $address_file
