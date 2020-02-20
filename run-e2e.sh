@@ -79,7 +79,7 @@ docker cp e2e-helper:/shared/addresses.json .
 relay_config=config.toml
 address_file=addresses.json
 
-first_network_address=$(sed --regexp-extended 's/\{"networks": \["(0x[0-9,a-f,A-F]+)".*/\1/' $address_file)
+first_network_address=$(sed -E 's/\{"networks": \["(0x[0-9,a-f,A-F]+)".*/\1/' $address_file)
 
 cat >${relay_config} <<EOF
 [relay]
