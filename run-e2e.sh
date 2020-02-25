@@ -83,20 +83,27 @@ first_network_address=$(sed -E 's/\{"networks": \["(0x[0-9,a-f,A-F]+)".*/\1/' $a
 
 cat >${relay_config} <<EOF
 [relay]
-syncInterval = 300
-updateNetworksInterval = 5
-enableEtherFaucet = true
-enableRelayMetaTransaction = true
-enableDeployIdentity = true
+update_indexed_networks_interval = 5
 
-[relay.rpc]
+[trustline_index]
+enable = true
+full_sync_interval = 300
+
+[faucet]
+enable = true
+
+[delegate]
+enable = true
+enable_deploy_identity = true
+
+[[delegate.fees]]
+base_fee = 1
+currency_network = "${first_network_address}"
+
+[node_rpc]
 host = "node"
 port = 8545
-ssl = false
-
-[[relay.delegationFees]]
-baseFee = 1
-currencyNetworkOfFees = "${first_network_address}"
+use_ssl = false
 EOF
 
 rm -f $address_file
