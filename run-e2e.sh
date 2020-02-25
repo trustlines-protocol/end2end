@@ -83,13 +83,40 @@ first_network_address=$(sed -E 's/\{"networks": \["(0x[0-9,a-f,A-F]+)".*/\1/' $a
 
 cat >${relay_config} <<EOF
 [relay]
+addresses_filepath = "/shared/addresses.json"
 update_indexed_networks_interval = 5
+
+[relay.gas_price_computation]
+method = "rpc"
+gas_price = 0
 
 [trustline_index]
 enable = true
 full_sync_interval = 300
+event_query_timeout = 20
+
+[tx_relay]
+enable = true
+
+[exchange]
+enable = true
+
+[node_rpc]
+host = "node"
+port = 8545
+use_ssl = false
 
 [faucet]
+enable = true
+
+[push_notification]
+enable = false
+
+[rest]
+port = 5000
+host = "relay"
+
+[messaging]
 enable = true
 
 [delegate]
@@ -99,11 +126,6 @@ enable_deploy_identity = true
 [[delegate.fees]]
 base_fee = 1
 currency_network = "${first_network_address}"
-
-[node_rpc]
-host = "node"
-port = 8545
-use_ssl = false
 EOF
 
 rm -f $address_file
