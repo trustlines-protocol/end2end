@@ -98,6 +98,7 @@ enable_deploy_identity = true
 
 [[delegate.fees]]
 base_fee = 1
+gas_price = 1000
 currency_network = "${first_network_address}"
 
 [node_rpc]
