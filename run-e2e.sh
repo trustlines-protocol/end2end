@@ -16,7 +16,8 @@ use_local_yarn=0
 pull=0
 coverage=0
 only_backend=0
-while getopts "lpcb" opt; do
+use_delegation_fee=0
+while getopts "lpcbf" opt; do
   case "$opt" in
   l)
     use_local_yarn=1
@@ -30,6 +31,9 @@ while getopts "lpcb" opt; do
     ;;
   b)
     only_backend=1
+    ;;
+  f)
+    use_delegation_fee=1
     ;;
   *)
     # illegal option case; getopt already shows an error message
@@ -79,7 +83,25 @@ docker cp e2e-helper:/shared/addresses.json .
 relay_config=config.toml
 address_file=addresses.json
 
-first_network_address=$(sed -E 's/\{"networks": \["(0x[0-9,a-f,A-F]+)".*/\1/' $address_file)
+if [[ ${use_delegation_fee} -eq 1 ]]; then
+  delegation_fee_network=$(sed -E 's/\{"networks": \["(0x[0-9,a-f,A-F]+)".*/\1/' $address_file)
+  delegation_fee_option=$(
+    cat <<EOF
+[[delegate.fees]]
+base_fee = 1
+gas_price = 1000
+currency_network = "${delegation_fee_network}"
+EOF
+  )
+else
+  delegation_fee_option=$(
+    cat <<EOF
+[[delegate.fees]]
+base_fee = 0
+gas_price = 0
+EOF
+  )
+fi
 
 cat >${relay_config} <<EOF
 [relay]
@@ -123,10 +145,7 @@ enable = true
 enable = true
 enable_deploy_identity = true
 
-[[delegate.fees]]
-base_fee = 1
-gas_price = 1000
-currency_network = "${first_network_address}"
+$delegation_fee_option
 EOF
 
 rm -f $address_file
