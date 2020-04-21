@@ -48,3 +48,6 @@ root folder to start with this option:
 
 If you only want to run the backend without automatically running the e2e tests,
 use the option `-b`. This can be used for running the e2e tests manually.
+
+## Running tests with delegation fees
+If you want to run tests with delegation fees provided the `-f` flag.
