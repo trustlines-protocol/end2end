@@ -51,3 +51,18 @@ use the option `-b`. This can be used for running the e2e tests manually.
 
 ## Running tests with delegation fees
 If you want to run tests with delegation fees provided the `-f` flag.
+
+## Running tests against specific (relay, clientlib, index, contracts) versions
+If you want to use a specific image (locally or from docker hub) you can use environment
+variables to configure the image. The following env vars exist with their respective defaults.
+
+    TL_RELAY_IMAGE=trustlines/relay
+    TL_INDEX_IMAGE=trustlines/py-eth-index
+    TL_CONTRACTS_IMAGE=trustlines/contracts
+    TL_E2E_IMAGE=trustlines/e2e
+
+You can provide the env variables either via an `.env` file beside the docker-compose file
+or directly. For more information check the docker-compose documentation.
+To run the tests against for example a different relay version, the command is
+
+    TL_RELAY_IMAGE=trustlines/relay:0.14.0 ./run-e2e.sh
