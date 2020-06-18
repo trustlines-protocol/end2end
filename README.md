@@ -66,3 +66,7 @@ or directly. For more information check the docker-compose documentation.
 To run the tests against for example a different relay version, the command is
 
     TL_RELAY_IMAGE=trustlines/relay:0.14.0 ./run-e2e.sh
+
+## Pull latest images
+To ensure you run the tests against the latest images, you can use the option `-p` to pull
+the latest images from docker hub.
