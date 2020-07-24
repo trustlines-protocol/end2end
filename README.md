@@ -61,6 +61,12 @@ root folder to start with this option:
 If you only want to run the backend without automatically running the e2e tests,
 use the option `-b`. This can be used for running the e2e tests manually.
 
+This can also be used to easily try out the Trustlines system for example by sending direct requests to the relay
+server api on http://localhost:5000/api/v1/, or by playing around with the [clientlib](https://github.com/trustlines-protocol/clientlib).
+
+See [the relay api documentation](https://github.com/trustlines-protocol/relay/blob/master/docs/RelayAPI.md)
+or the [clientlib repository](https://github.com/trustlines-protocol/clientlib) for more information.
+
 ### Running tests with delegation fees
 
 If you want to run tests with delegation fees provided the `-f` flag.
