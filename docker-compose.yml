@@ -21,7 +21,7 @@ services:
       - PGDATABASE
       - PGPASSWORD
     links:
-      - "parity:node"
+      - "openethereum:node"
       - "postgres:db"
     volumes:
       - shared:/shared
@@ -38,7 +38,7 @@ services:
       - internal
     links:
       - "postgres:db"
-      - "parity:node"
+      - "openethereum:node"
     environment:
       - PGHOST
       - PGUSER
@@ -88,9 +88,9 @@ services:
     networks:
       - internal
 
-  parity:
-    image: parity/parity:v2.6.3-beta
-    container_name: parity
+  openethereum:
+    image: openethereum/openethereum:v3.0.1
+    container_name: openethereum
     restart: unless-stopped
     networks:
       - internal
@@ -105,7 +105,7 @@ services:
       --jsonrpc-cors=*
       --jsonrpc-interface=0.0.0.0
       --unlock=0x00a329c0648769a73afac7f9381e08fb43dbea72
-      --password=/shared/parity-dev-pw
+      --password=/shared/openethereum-dev-pw
       --jsonrpc-server-threads=8
 
     # Passing the --jsonrpc-server-threads argument above made the
@@ -117,7 +117,7 @@ services:
     command: ["test", "--file", "/shared/addresses.json", "--jsonrpc", "http://node:8545"]
     container_name: contracts
     links:
-      - "parity:node"
+      - "openethereum:node"
     volumes:
       - shared:/shared
       - type: volume
