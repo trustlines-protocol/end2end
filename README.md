@@ -5,7 +5,7 @@ This directory contains the files needed to run the
 
 The goal is to test that the different components making the Trustlines protocol work together.
 It will run:
- - A development parity node that automatically mine a block when it receives a transaction
+ - A development openethereum node that automatically mine a block when it receives a transaction
  - A [relay server](https://github.com/trustlines-protocol/relay).
  - A [py-eth-index](https://github.com/trustlines-protocol/py-eth-index) instance to index events for the relay.
  - A [contracts](https://github.com/trustlines-protocol/contracts) docker image that will deploy test
@@ -48,7 +48,7 @@ To run the tests against for example a different relay version, the command is
 
 ### Running the end2end tests locally
 
-The `-l` option starts tests locally via yarn. The relay server, parity and
+The `-l` option starts tests locally via yarn. The relay server, openethereum and
 postgres are still being run via docker-compose. You must be in the clientlib's
 root folder to start with this option:
 

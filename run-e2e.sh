@@ -71,8 +71,8 @@ unset PGHOST PGUSER POSTGRES_USER PGDATABASE PGPASSWORD POSTGRES_PASSWORD
 
 docker-compose up --no-start
 docker-compose up helper
-docker cp parity-dev-pw e2e-helper:/shared
-docker-compose up -d postgres parity
+docker cp openethereum-dev-pw e2e-helper:/shared
+docker-compose up -d postgres openethereum
 
 sleep 5
 docker-compose up contracts
@@ -156,7 +156,7 @@ docker-compose up -d index relay
 
 if [[ ${only_backend} -eq 0 ]]; then
   sleep 3
-  docker-compose logs -t -f parity index relay e2e &
+  docker-compose logs -t -f openethereum index relay e2e &
   if [[ ${use_local_yarn} -eq 0 ]]; then
     docker-compose up -d e2e
     docker_wait_output=$(docker wait e2e)
@@ -193,5 +193,5 @@ else
   echo "====================================================="
   echo
   sleep 5
-  docker-compose logs -t -f parity index relay
+  docker-compose logs -t -f openethereum index relay
 fi
