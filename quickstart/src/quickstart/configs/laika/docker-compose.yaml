@@ -1,0 +1,131 @@
+# This composition works best in usage with the quickstart tool at
+# 'quickstart' within this repository.
+# Actually this file is also being used and included by the quickstart
+# image.
+
+version: "3.2"
+services:
+  home-node:
+    image: trustlines/tlbc-testnet:release
+    restart: always
+    stop_grace_period: 3m
+    networks:
+      home-net:
+        aliases:
+          - home-node
+    ports:
+      - 30302:30302
+      - 30302:30302/udp
+      - 8545:8545
+      - 8545:8545/udp
+      - 8546:8546
+      - 8546:8546/udp
+    volumes:
+      - ${HOST_BASE_DIR:-.}/databases/home-node:/data/tlbc
+      - ${HOST_BASE_DIR:-.}/config:/config/custom
+      - ${HOST_BASE_DIR:-.}/enode:/config/network
+      - ${HOST_BASE_DIR:-.}/shared:/shared/
+    command: >-
+      --role validator
+      ${ADDRESS_ARG:-}
+      --client-args --jsonrpc-server-threads=8 --jsonrpc-cors=* --jsonrpc-interface=0.0.0.0 --unlock=${UNLOCK_ADDRESS}
+
+
+  # the helper is only used to populate the shared volume
+  # please note that we are not able to use bind mounts on circleci unless we
+  # would use the machine images
+  helper:
+    image: ubuntu:18.04
+    container_name: e2e-helper
+    volumes:
+      - shared:/shared
+    command: ["true"]
+
+  relay:
+    image: ${TL_RELAY_IMAGE:-trustlines/relay}
+    container_name: relay
+    environment:
+      - TRUSTLINES_SYNC_TX_RELAY=1
+      - PGHOST
+      - PGUSER
+      - PGDATABASE
+      - PGPASSWORD
+    links:
+      - "postgres:db"
+      - "home-node:node"
+    volumes:
+      - shared:/shared
+    ports:
+      - "127.0.0.1:5000:5000"
+    networks:
+      - home-net
+      - internal
+    command: ["--config", "/shared/config.toml"]
+    restart: unless-stopped
+
+  index:
+    image: ${TL_INDEX_IMAGE:-trustlines/py-eth-index}
+    networks:
+      - home-net
+      - internal
+    links:
+      - "postgres:db"
+      - "home-node:node"
+    environment:
+      - PGHOST
+      - PGUSER
+      - PGDATABASE
+      - PGPASSWORD
+    restart: unless-stopped
+    command: runsync --jsonrpc http://node:8545 --waittime 200
+
+  createtables:
+    image: ${TL_INDEX_IMAGE:-trustlines/py-eth-index}
+    restart: on-failure
+    networks:
+      - home-net
+      - internal
+    links:
+      - "postgres:db"
+    environment:
+      - PGHOST
+      - PGUSER
+      - PGDATABASE
+      - PGPASSWORD
+    command: createtables
+
+  init:
+    image: ${TL_INDEX_IMAGE:-trustlines/py-eth-index}
+    restart: on-failure
+    networks:
+      - home-net
+      - internal
+    links:
+      - "postgres:db"
+      - createtables
+    environment:
+      - PGHOST
+      - PGUSER
+      - PGDATABASE
+      - PGPASSWORD
+    volumes:
+      - shared:/shared
+    command: importabi --contracts /shared/contracts.json --addresses /shared/addresses.json
+
+  postgres:
+    image: postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+    networks:
+      - internal
+
+volumes:
+  shared:
+
+networks:
+  internal:
+    external: false
+  home-net:
+    driver: bridge
