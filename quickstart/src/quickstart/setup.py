@@ -36,7 +36,7 @@ def create_docker_readme(base_dir):
 def copy_config_files(chain_name, base_dir):
     shutil.copy(config_file_getter(chain_name, "docker-compose.yaml")(), base_dir)
     shutil.copy(config_file_getter(chain_name, "addresses.json")(), base_dir)
-    # shutil.copy(config_file_getter("shared", "config.toml")(), base_dir)
+    shutil.copy(config_file_getter("shared", "config.toml")(), base_dir)
     shutil.copy(config_file_getter("shared", "contracts.json")(), base_dir)
 
 
