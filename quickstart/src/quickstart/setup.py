@@ -3,8 +3,6 @@ import shutil
 
 from quickstart.utils import config_file_getter
 
-DOCKER_COMPOSE_FILE_NAME = "docker-compose.yaml"
-DOCKER_COMPOSE_OVERRIDE_FILE_NAME = "docker-compose.override.yaml"
 
 README_PATH = "readme.txt"
 README_TEXT = "\n".join(

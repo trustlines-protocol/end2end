@@ -37,7 +37,7 @@ def start(*, base_dir, host_base_dir, chain_name,) -> None:
     }
 
     try:
-        run_e2e = subprocess.run(
+        subprocess.run(
             os.path.join(base_dir, "run-e2e.sh"), check=True, **run_kwargs,
         )
     except subprocess.CalledProcessError as called_process_error:

@@ -52,30 +52,6 @@ def ensure_clean_setup(base_dir, chain_dir):
         )
 
 
-def non_empty_file_exists(file_path: str) -> bool:
-    return (
-        os.path.isfile(file_path)
-        # Ignore touched only files (docker-compose workaround)
-        and os.stat(file_path).st_size != 0
-    )
-
-
-def is_author_address_prepared(base_dir) -> bool:
-    return os.path.isfile(os.path.join(base_dir, AUTHOR_ADDRESS_FILE_PATH))
-
-
-def is_netstats_prepared(base_dir) -> bool:
-    return non_empty_file_exists(os.path.join(base_dir, NETSTATS_ENV_FILE_PATH))
-
-
-def is_bridge_prepared(base_dir) -> bool:
-    return non_empty_file_exists(os.path.join(base_dir, BRIDGE_CONFIG_FILE_EXTERNAL))
-
-
-def is_monitor_prepared(base_dir) -> bool:
-    return os.path.isdir(os.path.join(base_dir, MONITOR_DIR))
-
-
 class TrustlinesFiles:
     def __init__(self, password_path, address_path, keystore_path):
         self.password_path = password_path
@@ -149,19 +125,6 @@ def read_private_key() -> str:
         )
 
 
-def read_address() -> str:
-    while True:
-        address = click.prompt("Address (checksummed)")
-        if is_checksum_address(address):
-            return address
-        else:
-            click.echo(
-                fill(
-                    "Invalid address (must be in hex encoded, 0x prefixed, checksummed format). Please try again"
-                )
-            )
-
-
 def read_encryption_password() -> str:
     click.echo(
         "Please enter a password to encrypt the private key. "
@@ -197,46 +160,6 @@ def read_decryption_password(keyfile_dict) -> Tuple[Account, str]:
             else:
                 click.echo(fill(f"Error: failed to decrypt keystore file: {repr(err)}"))
                 sys.exit(1)
-
-
-def show_file_diff(user_file: str, default_file: str, file_name="file"):
-    click.echo("")
-    with open(user_file) as file:
-        user_lines = file.readlines()
-    with open(default_file) as file:
-        default_lines = file.readlines()
-
-    is_same = True
-    for line in difflib.unified_diff(
-        user_lines,
-        default_lines,
-        fromfile=f"Your {file_name}",
-        tofile=f"New default {file_name}",
-        lineterm="",
-    ):
-        is_same = False
-        if len(line) > 1 and line[-1] == "\n":
-            # Remove final newline otherwise we will show two new lines
-            line = line[:-1]
-        if line.startswith("-"):
-            click.secho(line, fg="red")
-        elif line.startswith("+"):
-            click.secho(line, fg="green")
-        else:
-            click.echo(line)
-
-    if is_same:
-        click.echo("Both files are the same")
-
-    click.echo("")
-
-
-def file_hash(file_name: str) -> str:
-    hasher = sha1()
-    with open(file_name, "rb") as file:
-        buf = file.read()
-        hasher.update(buf)
-    return hasher.hexdigest()
 
 
 def config_file_getter(config_name, filename):

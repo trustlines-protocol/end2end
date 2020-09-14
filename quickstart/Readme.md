@@ -61,3 +61,5 @@ The file `addresses.json` contains the addresses of currency networks used by th
 The key and password for the blockchain node is in the `config` directory.
 The directories `databases`, `enode`, and `shared` are used to persist the data of the blockchain node.
 There is no persistence of the database of the events indexer used by the relay.
+The script uses the port `30302` for networking of the blockchain node and exposes the relay api on
+`127.0.0.1:5000`

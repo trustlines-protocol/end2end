@@ -11,10 +11,6 @@ services:
     ports:
       - 30302:30302
       - 30302:30302/udp
-      - 8545:8545
-      - 8545:8545/udp
-      - 8546:8546
-      - 8546:8546/udp
     volumes:
       - ${HOST_BASE_DIR:-.}/databases:/data
       - ${HOST_BASE_DIR:-.}/config:/config/custom

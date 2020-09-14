@@ -1,33 +1,7 @@
 import click
 
-from quickstart import setup, node_account, utils
+from quickstart import setup, node_account
 from quickstart.start import start
-
-DEFAULT_CONFIGS = ["laika", "tlbc"]
-LAIKA, TLBC = DEFAULT_CONFIGS
-
-
-def docker_compose_file_getter(config_name):
-    return utils.config_file_getter(config_name, "docker-compose.yaml")
-
-
-class DefaultPathType(click.Path):
-    def __init__(self, default_path_lookups, *args, **kwargs):
-        """
-        Like the click path type, but additionally accepts a mapping for predefined paths
-        :param default_path_lookups: mapping from template name to lookup function
-        :param args: args for click.Path
-        :param kwargs: kwargs for click.Path
-        """
-        super().__init__(*args, **kwargs)
-
-        self.default_path_lookups = default_path_lookups
-
-    def convert(self, value, param, ctx):
-        if value in self.default_path_lookups:
-            value = self.default_path_lookups[value]()
-
-        return super().convert(value, param, ctx)
 
 
 host_base_dir_option = click.option(
