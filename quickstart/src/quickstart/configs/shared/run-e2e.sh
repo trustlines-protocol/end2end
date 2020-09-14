@@ -1,6 +1,9 @@
 #! /bin/bash
 
+# Treat unset variables as an error when substituting.
 set -u
+# Exit on error
+set -e
 
 function die() {
   echo "$1"

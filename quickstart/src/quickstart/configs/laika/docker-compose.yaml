@@ -1,8 +1,3 @@
-# This composition works best in usage with the quickstart tool at
-# 'quickstart' within this repository.
-# Actually this file is also being used and included by the quickstart
-# image.
-
 version: "3.2"
 services:
   home-node:
@@ -21,7 +16,7 @@ services:
       - 8546:8546
       - 8546:8546/udp
     volumes:
-      - ${HOST_BASE_DIR:-.}/databases/home-node:/data/tlbc
+      - ${HOST_BASE_DIR:-.}/databases:/data
       - ${HOST_BASE_DIR:-.}/config:/config/custom
       - ${HOST_BASE_DIR:-.}/enode:/config/network
       - ${HOST_BASE_DIR:-.}/shared:/shared/
@@ -43,7 +38,6 @@ services:
 
   relay:
     image: ${TL_RELAY_IMAGE:-trustlines/relay}
-    container_name: relay
     environment:
       - TRUSTLINES_SYNC_TX_RELAY=1
       - PGHOST

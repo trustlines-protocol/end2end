@@ -1,5 +1,6 @@
 import os
 import subprocess
+import click
 
 from quickstart.node_account import get_account_address
 
@@ -35,6 +36,18 @@ def start(*, base_dir, host_base_dir, chain_name,) -> None:
         "universal_newlines": True,
     }
 
-    subprocess.run(
-        os.path.join(base_dir, "run-e2e.sh"), check=True, **run_kwargs,
-    )
+    try:
+        run_e2e = subprocess.run(
+            os.path.join(base_dir, "run-e2e.sh"), check=True, **run_kwargs,
+        )
+    except subprocess.CalledProcessError as called_process_error:
+        raise click.ClickException(
+            "\n".join(
+                (
+                    f"Command {called_process_error.cmd} failed with exit code "
+                    f"{called_process_error.returncode}.",
+                    "Captured stderr:",
+                    f"{called_process_error.stderr}",
+                )
+            )
+        )

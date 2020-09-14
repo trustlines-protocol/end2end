@@ -41,15 +41,6 @@ host_base_dir_option = click.option(
 )
 
 
-def project_name_option(**kwargs):
-    return click.option(
-        "--project-name",
-        help="The project name. This will be used to namespace the docker containers (<project-name>_<service-name>)",
-        show_default=True,
-        **kwargs,
-    )
-
-
 def base_dir_option(**kwargs):
     return click.option(
         "-d",
@@ -63,15 +54,14 @@ def base_dir_option(**kwargs):
 
 @click.group()
 def main():
-    """Script to guide you through the quick setup of a Trustlines Blockchain node."""
+    """Script to guide you through the quick setup of a Trustlines system."""
     pass
 
 
 @main.command()
-@project_name_option(default="tlbc")
 @base_dir_option(default="tlbc")
 @host_base_dir_option
-def tlbc(host_base_dir, project_name, base_dir):
+def tlbc(host_base_dir, base_dir):
     """
     Setup with Trustlines Blockchain settings.
 
@@ -81,16 +71,15 @@ def tlbc(host_base_dir, project_name, base_dir):
     run(
         chain_name="tlbc",
         base_dir=base_dir,
+        chain_dir="tlbc",
         host_base_dir=host_base_dir,
-        project_name=project_name,
     )
 
 
 @main.command()
-@project_name_option(default="laika")
 @base_dir_option(default="laika")
 @host_base_dir_option
-def laika(host_base_dir, project_name, base_dir):
+def laika(host_base_dir, base_dir):
     """
     Setup with Laika settings.
 
@@ -99,17 +88,19 @@ def laika(host_base_dir, project_name, base_dir):
     run(
         chain_name="laika",
         host_base_dir=host_base_dir,
+        chain_dir="Trustlines",
         base_dir=base_dir,
-        project_name=project_name,
     )
 
 
-def run(
-    chain_name, base_dir, host_base_dir=None, project_name=None,
-):
+def run(chain_name, base_dir, chain_dir, host_base_dir=None):
     click.echo("Starting account setup.")
-    node_account.setup_interactively(base_dir=base_dir, chain_dir=chain_name)
+    node_account.setup_interactively(base_dir=base_dir, chain_dir=chain_dir)
+    click.echo(
+        f"Account setup with address: {node_account.get_account_address(base_dir)}"
+    )
     click.echo("Account setup complete.\n")
+
     click.echo("Starting e2e configs setup.")
     setup.setup(
         chain_name=chain_name, base_dir=base_dir,
