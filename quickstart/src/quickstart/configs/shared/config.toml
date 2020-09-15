@@ -1,0 +1,46 @@
+# Config for the relay server
+[relay]
+# Do not change the addresses_filepath, it is created inside the docker container by the starting script
+addresses_filepath = "/shared/addresses.json"
+update_indexed_networks_interval = 5
+
+[relay.gas_price_computation]
+method = "rpc"
+gas_price = 0
+
+[trustline_index]
+enable = true
+full_sync_interval = 300
+
+[tx_relay]
+enable = true
+
+[exchange]
+enable = true
+
+[node_rpc]
+# The values here need to match with the node inside the docker-compose.yaml
+host = "node"
+port = 8545
+use_ssl = false
+
+[faucet]
+enable = false
+
+[push_notification]
+enable = false
+
+[rest]
+port = 5000
+host = "relay"
+
+[messaging]
+enable = true
+
+[delegate]
+enable = true
+enable_deploy_identity = true
+
+[[delegate.fees]]
+base_fee = 0
+gas_price = 0
