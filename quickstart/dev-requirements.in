@@ -1,0 +1,10 @@
+-c requirements.txt
+pip
+setuptools
+wheel
+pip-tools
+black
+flake8
+flake8-string-format
+mypy
+pre-commit
