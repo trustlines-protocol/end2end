@@ -1,0 +1,20 @@
+eth_account
+click
+requests
+toml
+web3
+
+# development dependencies
+black
+mypy
+pre-commit
+pytest
+pytest-cov
+setuptools_scm
+bump2version
+pip-tools
+
+# flake8 and plugins, keep them in sync with pre-commit's config
+flake8
+pep8-naming
+flake8-string-format

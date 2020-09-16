@@ -1,1 +1,4 @@
 config.toml
+.installed
+.eggs/
+*.egg-info/
