@@ -1,21 +1,18 @@
-import difflib
+import functools
 import json
 import os
 import sys
-from hashlib import sha1
 from pathlib import Path
 from textwrap import fill
 from typing import Tuple
-import functools
-import pkg_resources
 
 import click
+import pkg_resources
 from eth_account import Account
-from eth_utils import decode_hex, is_checksum_address, is_hex, remove_0x_prefix
+from eth_utils import decode_hex, is_hex, remove_0x_prefix
 
 from quickstart.constants import (
     ADDRESS_FILE_PATH,
-    AUTHOR_ADDRESS_FILE_PATH,
     KEY_DIR,
     KEYSTORE_FILE_NAME,
     PASSWORD_FILE_PATH,
