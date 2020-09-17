@@ -1,10 +1,14 @@
 import os
 import subprocess
+import typing
+
 import click
 
 from quickstart.node_account import get_account_address
 
 
+# Ignore typing because it seems not to handle `subprocess.run` **kwargs properly
+@typing.no_type_check
 def start(*, base_dir, host_base_dir, chain_name,) -> None:
 
     env_variables = {

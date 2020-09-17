@@ -3,7 +3,6 @@ import shutil
 
 from quickstart.utils import config_file_getter
 
-
 README_PATH = "readme.txt"
 README_TEXT = "\n".join(
     [
@@ -12,8 +11,10 @@ README_TEXT = "\n".join(
         "You can check which services are running with `docker-compose ps`.",
         "You can use `docker-compose down` to shut the services down or `docker-compose up` to start them. "
         "You can also stop individual services for example `docker-compose stop relay`.",
-        "For more information see the docker-compose documentation via `docker-compose --help` or online at https://docs.docker.com/compose/. "
-        "You can also check the docker documentation via `docker --help` or online at https://docs.docker.com/engine/reference/commandline/docker/",
+        "For more information see the docker-compose documentation via `docker-compose --help` "
+        "or online at https://docs.docker.com/compose/. "
+        "You can also check the docker documentation via `docker --help` or online at "
+        "https://docs.docker.com/engine/reference/commandline/docker/",
     ]
 )
 

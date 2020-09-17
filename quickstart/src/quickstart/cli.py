@@ -1,8 +1,7 @@
 import click
 
-from quickstart import setup, node_account
+from quickstart import node_account, setup
 from quickstart.start import start
-
 
 host_base_dir_option = click.option(
     "--host-base-dir",
