@@ -69,4 +69,4 @@ or the [clientlib repository](https://github.com/trustlines-protocol/clientlib) 
 
 ### Running tests with delegation fees
 
-If you want to run tests with delegation fees provided the `-f` flag.
+If you want to run tests with delegation fees provide the `-f` flag.
