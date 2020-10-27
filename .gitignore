@@ -2,3 +2,5 @@ config.toml
 .installed
 .eggs/
 *.egg-info/
+.idea
+end2end.*
