@@ -56,7 +56,14 @@ function cleanup() {
   rm -r "${mydir}"
 }
 
+# Copies the file addresses.json in the shared volume to the local directory cwd/tests/e2e-config
+function copySharedVolumeAddressesToLocalMachine() {
+  echo "copy addresses from e2e-helper:/shared/addresses.json to $cwd/tests/e2e-config/"
+  docker cp e2e-helper:/shared/addresses.json $cwd/tests/e2e-config/
+}
+
 E2E_DIR=$(dirname "$(realpath "${BASH_SOURCE[0]}")")
+echo $E2E_DIR
 cd "${E2E_DIR}" || die "cd failed"
 if [[ ${pull} -eq 1 ]]; then
   docker-compose pull
@@ -176,14 +183,14 @@ if [[ ${only_backend} -eq 0 ]]; then
     fi
   else
     cd "${cwd}" || die "cd failed"
-    # Copies the file addresses.json in the shared volume to the local directory cwd/tests/e2e-config
-    docker cp e2e-helper:/shared/addresses.json "$PWD"/tests/e2e-config/
+    copySharedVolumeAddressesToLocalMachine
     yarn run test:e2e | tee "${mydir}/output.txt"
     result="${PIPESTATUS[0]}"
   fi
   cat "${mydir}/output.txt"
   exit "${result}"
 else
+  copySharedVolumeAddressesToLocalMachine
   echo
   echo "====================================================="
   echo "Initialization is complete."
