@@ -89,7 +89,7 @@ services:
       - internal
 
   openethereum:
-    image: openethereum/openethereum:v3.0.1
+    image: openethereum/openethereum:v3.1.0
     container_name: openethereum
     restart: unless-stopped
     networks:
