@@ -113,7 +113,6 @@ fi
 cat >${relay_config} <<EOF
 [relay]
 addresses_filepath = "/shared/addresses.json"
-update_indexed_networks_interval = 5
 
 [relay.gas_price_computation]
 method = "rpc"
@@ -121,7 +120,7 @@ gas_price = 0
 
 [trustline_index]
 enable = true
-full_sync_interval = 300
+sync_interval = 1
 
 [tx_relay]
 enable = true
