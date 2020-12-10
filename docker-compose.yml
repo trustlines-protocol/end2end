@@ -25,11 +25,12 @@ services:
       - "postgres:db"
     volumes:
       - shared:/shared
+      - ./end2end-coverage:/end2end-coverage
     ports:
       - "127.0.0.1:5000:5000"
     networks:
       - internal
-    command: ["--config", "/shared/config.toml"]
+    command: ["--config", "/shared/config.toml", "--coverage"]
     restart: unless-stopped
 
   index:
