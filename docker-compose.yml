@@ -115,7 +115,7 @@ services:
 
   contracts:
     image: ${TL_CONTRACTS_IMAGE:-trustlines/contracts}
-    command: ["test", "--file", "/shared/addresses.json", "--jsonrpc", "http://node:8545"]
+    command: ["test", "--file", "/shared/addresses.json", "--jsonrpc", "http://node:8545", "--gas-price", "0"]
     container_name: contracts
     links:
       - "openethereum:node"
