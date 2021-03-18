@@ -2,7 +2,7 @@
 pip
 setuptools
 wheel
-pip-tools
+pip-tools>=6.0.0  # fixes bugs with python3.8
 black
 flake8
 flake8-string-format

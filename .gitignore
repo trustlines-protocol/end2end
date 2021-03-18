@@ -4,3 +4,4 @@ config.toml
 *.egg-info/
 .idea
 end2end.*
+end2end-coverage
