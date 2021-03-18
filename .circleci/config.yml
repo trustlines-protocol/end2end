@@ -3,7 +3,7 @@ version: 2.1
 executors:
   ubuntu-builder:
     docker:
-      - image: trustlines/builder:master25
+      - image: trustlines/builder:master61
     working_directory: ~/repo
 
 # define some common commands
@@ -48,6 +48,7 @@ jobs:
           name: run pre-commit
           command: |
             pre-commit run -a
+
   run-end2end-tests:
     executor: ubuntu-builder
     working_directory: ~/repo
@@ -59,7 +60,6 @@ jobs:
           name: run end2end tests
           command: |
             ./run-e2e.sh
-
 
 workflows:
   version: 2

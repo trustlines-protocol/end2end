@@ -4,20 +4,54 @@
 #
 #    ./compile-requirements
 #
-bitarray==1.2.2           # via eth-account
-click==7.1.2              # via e2e-quickstart (setup.py)
-cytoolz==0.10.1           # via eth-keyfile, eth-utils
-eth-abi==2.1.1            # via eth-account
-eth-account==0.5.3        # via e2e-quickstart (setup.py)
-eth-hash==0.2.0           # via eth-utils
-eth-keyfile==0.5.1        # via eth-account
-eth-keys==0.3.3           # via eth-account, eth-keyfile
-eth-rlp==0.2.0            # via eth-account
-eth-typing==2.2.2         # via eth-abi, eth-keys, eth-utils
-eth-utils==1.9.5          # via eth-abi, eth-account, eth-keyfile, eth-keys, eth-rlp, rlp
-hexbytes==0.2.1           # via eth-account, eth-rlp
-parsimonious==0.8.1       # via eth-abi
-pycryptodome==3.9.8       # via eth-keyfile
-rlp==1.2.0                # via eth-account, eth-rlp
-six==1.15.0               # via parsimonious
-toolz==0.10.0             # via cytoolz
+bitarray==1.2.2
+    # via eth-account
+click==7.1.2
+    # via e2e-quickstart (setup.py)
+cytoolz==0.10.1
+    # via
+    #   eth-keyfile
+    #   eth-utils
+eth-abi==2.1.1
+    # via eth-account
+eth-account==0.5.3
+    # via e2e-quickstart (setup.py)
+eth-hash==0.2.0
+    # via eth-utils
+eth-keyfile==0.5.1
+    # via eth-account
+eth-keys==0.3.3
+    # via
+    #   eth-account
+    #   eth-keyfile
+eth-rlp==0.2.0
+    # via eth-account
+eth-typing==2.2.2
+    # via
+    #   eth-abi
+    #   eth-keys
+    #   eth-utils
+eth-utils==1.9.5
+    # via
+    #   eth-abi
+    #   eth-account
+    #   eth-keyfile
+    #   eth-keys
+    #   eth-rlp
+    #   rlp
+hexbytes==0.2.1
+    # via
+    #   eth-account
+    #   eth-rlp
+parsimonious==0.8.1
+    # via eth-abi
+pycryptodome==3.9.8
+    # via eth-keyfile
+rlp==1.2.0
+    # via
+    #   eth-account
+    #   eth-rlp
+six==1.15.0
+    # via parsimonious
+toolz==0.10.0
+    # via cytoolz

@@ -59,11 +59,11 @@ function cleanup() {
 # Copies the file addresses.json in the shared volume to the local directory cwd/tests/e2e-config
 function copySharedVolumeAddressesToLocalMachine() {
   echo "copy addresses from e2e-helper:/shared/addresses.json to $cwd/tests/e2e-config/"
-  docker cp e2e-helper:/shared/addresses.json $cwd/tests/e2e-config/
+  docker cp e2e-helper:/shared/addresses.json "$cwd/tests/e2e-config/"
 }
 
 E2E_DIR=$(dirname "$(realpath "${BASH_SOURCE[0]}")")
-echo $E2E_DIR
+echo "$E2E_DIR"
 cd "${E2E_DIR}" || die "cd failed"
 if [[ ${pull} -eq 1 ]]; then
   docker-compose pull
