@@ -78,7 +78,7 @@ services:
     volumes:
       - shared:/shared
       - abi:/abi
-    command: importabi --contracts /abi/contracts.json --addresses /shared/addresses.json
+    command: importabi --addresses /shared/addresses.json
 
   postgres:
     image: postgres
