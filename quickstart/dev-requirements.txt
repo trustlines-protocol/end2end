@@ -51,8 +51,10 @@ pycodestyle==2.6.0
     # via flake8
 pyflakes==2.2.0
     # via flake8
-pyyaml==5.3.1
-    # via pre-commit
+pyyaml==5.4.1
+    # via
+    #   -r dev-requirements.in
+    #   pre-commit
 regex==2020.7.14
     # via black
 six==1.15.0
