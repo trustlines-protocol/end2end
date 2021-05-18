@@ -8,3 +8,4 @@ flake8
 flake8-string-format
 mypy
 pre-commit
+pyyaml>=5.4  # avoid vulnerable pre-commit dependency
