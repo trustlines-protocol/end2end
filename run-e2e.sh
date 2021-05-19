@@ -151,11 +151,17 @@ enable = true
 enable_deploy_identity = true
 
 $delegation_fee_option
+
+[account]
+keystore_path = "/shared/keystore.json"
+keystore_password_path = "/shared/pass.pwd"
 EOF
 
 rm -f $address_file
 
 docker cp config.toml e2e-helper:/shared
+docker cp keystore.json e2e-helper:/shared
+docker cp pass.pwd e2e-helper:/shared
 docker-compose up createtables
 docker-compose up init
 docker-compose up -d index relay
