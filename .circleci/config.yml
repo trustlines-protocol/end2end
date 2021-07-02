@@ -45,9 +45,69 @@ jobs:
             - ~/.local/bin
             - ~/.local/venvs/pre-commit
       - run:
-          name: run pre-commit
+          name: check-added-large-files
           command: |
-            pre-commit run -a
+            pre-commit run -a check-added-large-files
+      - run:
+          name: check-byte-order-marker
+          command: |
+            pre-commit run -a check-byte-order-marker
+      - run:
+          name: check-case-conflict
+          command: |
+            pre-commit run -a check-case-conflict
+      - run:
+          name: check-json
+          command: |
+            pre-commit run -a check-json
+      - run:
+          name: check-merge-conflict
+          command: |
+            pre-commit run -a check-merge-conflict
+      - run:
+          name: check-yaml
+          command: |
+            pre-commit run -a check-yaml
+      - run:
+          name: end-of-file-fixer
+          command: |
+            pre-commit run -a end-of-file-fixer
+      - run:
+          name: check-ast
+          command: |
+            pre-commit run -a check-ast
+      - run:
+          name: debug-statements
+          command: |
+            pre-commit run -a debug-statements
+      - run:
+          name: trailing-whitespace
+          command: |
+            pre-commit run -a trailing-whitespace
+      - run:
+          name: flake8
+          command: |
+            pre-commit run -a flake8
+      - run:
+          name: shfmt
+          command: |
+            pre-commit run -a shfmt
+      - run:
+          name: shellcheck
+          command: |
+            pre-commit run -a shellcheck
+      - run:
+          name: isort
+          command: |
+            pre-commit run -a isort
+      - run:
+          name: black
+          command: |
+            pre-commit run -a black
+      - run:
+          name: mypy
+          command: |
+            pre-commit run -a mypy
 
   run-end2end-tests:
     executor: ubuntu-builder
