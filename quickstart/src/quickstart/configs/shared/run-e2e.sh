@@ -21,7 +21,6 @@ unset PGHOST PGUSER POSTGRES_USER PGDATABASE PGPASSWORD POSTGRES_PASSWORD
 docker-compose up --no-start
 docker-compose up helper
 docker cp addresses.json e2e-helper:/shared
-docker cp contracts.json e2e-helper:/shared
 docker-compose up -d postgres
 docker-compose up -d home-node
 

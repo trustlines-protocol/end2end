@@ -64,6 +64,17 @@ There is no persistence of the database of the events indexer used by the relay.
 The script uses the port `30302` for networking of the blockchain node and exposes the relay api on
 `127.0.0.1:5000`
 
+## Stopping and restarting services
+
+You can stop the running via `docker stop <service>` or stop all running docker
+containers with `docker stop $(docker ps -a -q)`. You can remove the containers
+similarly using `docker rm <service>` or `docker rm $(docker ps -a -q)`.
+
+To resume running the services, change directory into the created `/tlbc` or `/laika`
+and execute `./run-e2e.sh`.
+
+
+
 ## Dependencies
 
 To manage and pin the (sub)dependencies of the relay server we use

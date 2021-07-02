@@ -100,7 +100,7 @@ services:
       - PGPASSWORD
     volumes:
       - shared:/shared
-    command: importabi --contracts /shared/contracts.json --addresses /shared/addresses.json
+    command: importabi --addresses /shared/addresses.json
 
   postgres:
     image: postgres
