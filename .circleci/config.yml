@@ -113,7 +113,7 @@ jobs:
     executor: ubuntu-builder
     working_directory: ~/repo
     steps:
-      - setup_remote_docker
+      - setup_remote_docker:
           version: 19.03.14
       - checkout
       - config-path
