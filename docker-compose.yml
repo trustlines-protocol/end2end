@@ -20,9 +20,9 @@ services:
       - PGUSER
       - PGDATABASE
       - PGPASSWORD
-    links:
-      - "openethereum:node"
-      - "postgres:db"
+    depends_on:
+      - openethereum
+      - postgres
     volumes:
       - shared:/shared
       - ./end2end-coverage:/end2end-coverage
@@ -37,24 +37,24 @@ services:
     image: ${TL_INDEX_IMAGE:-trustlines/py-eth-index}
     networks:
       - internal
-    links:
-      - "postgres:db"
-      - "openethereum:node"
+    depends_on:
+      - postgres
+      - openethereum
     environment:
       - PGHOST
       - PGUSER
       - PGDATABASE
       - PGPASSWORD
     restart: unless-stopped
-    command: runsync --jsonrpc http://node:8545 --waittime 200
+    command: runsync --jsonrpc http://openethereum:8545 --waittime 200
 
   createtables:
     image: ${TL_INDEX_IMAGE:-trustlines/py-eth-index}
     restart: on-failure
     networks:
       - internal
-    links:
-      - "postgres:db"
+    depends_on:
+      - postgres
     environment:
       - PGHOST
       - PGUSER
@@ -67,8 +67,8 @@ services:
     restart: on-failure
     networks:
       - internal
-    links:
-      - "postgres:db"
+    depends_on:
+      - postgres
       - createtables
     environment:
       - PGHOST
@@ -115,10 +115,10 @@ services:
 
   contracts:
     image: ${TL_CONTRACTS_IMAGE:-trustlines/contracts}
-    command: ["test", "--file", "/shared/addresses.json", "--jsonrpc", "http://node:8545", "--gas-price", "0"]
+    command: ["test", "--file", "/shared/addresses.json", "--jsonrpc", "http://openethereum:8545", "--gas-price", "0"]
     container_name: contracts
-    links:
-      - "openethereum:node"
+    depends_on:
+      - openethereum
     volumes:
       - shared:/shared
       - type: volume
@@ -134,14 +134,15 @@ services:
     container_name: e2e
     networks:
       - internal
-    links:
-      - "relay"
+    depends_on:
+      - relay
     volumes:
       - shared:/clientlib/tests/e2e-config
 
 networks:
   internal:
     external: false
+    driver: bridge
 
 volumes:
   abi:

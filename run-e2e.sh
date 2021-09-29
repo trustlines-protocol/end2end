@@ -129,7 +129,7 @@ enable = true
 enable = true
 
 [node_rpc]
-host = "node"
+host = "openethereum"
 port = 8545
 use_ssl = false
 
