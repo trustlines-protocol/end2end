@@ -21,8 +21,8 @@ services:
       - PGDATABASE
       - PGPASSWORD
     depends_on:
-      - openethereum
-      - postgres
+      - node
+      - db
     volumes:
       - shared:/shared
       - ./end2end-coverage:/end2end-coverage
@@ -38,15 +38,15 @@ services:
     networks:
       - internal
     depends_on:
-      - postgres
-      - openethereum
+      - db
+      - node
     environment:
       - PGHOST
       - PGUSER
       - PGDATABASE
       - PGPASSWORD
     restart: unless-stopped
-    command: runsync --jsonrpc http://openethereum:8545 --waittime 200
+    command: runsync --jsonrpc http://node:8545 --waittime 200
 
   createtables:
     image: ${TL_INDEX_IMAGE:-trustlines/py-eth-index}
@@ -54,7 +54,7 @@ services:
     networks:
       - internal
     depends_on:
-      - postgres
+      - db
     environment:
       - PGHOST
       - PGUSER
@@ -68,7 +68,7 @@ services:
     networks:
       - internal
     depends_on:
-      - postgres
+      - db
       - createtables
     environment:
       - PGHOST
@@ -80,19 +80,21 @@ services:
       - abi:/abi
     command: importabi --addresses /shared/addresses.json
 
-  postgres:
+  db:
     image: postgres
     restart: unless-stopped
+    ports:
+      - "5432:5432"
     environment:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
     networks:
       - internal
 
-  openethereum:
-    image: openethereum/openethereum:v3.1.0
-    container_name: openethereum
-    restart: unless-stopped
+
+  node:
+    image: trufflesuite/ganache:latest
+    restart: always
     networks:
       - internal
     expose:
@@ -101,24 +103,25 @@ services:
       - "127.0.0.1:8545:8545"
     volumes:
       - shared:/shared
-    command: >
-      --config=dev-insecure
-      --jsonrpc-cors=*
-      --jsonrpc-interface=0.0.0.0
-      --unlock=0x00a329c0648769a73afac7f9381e08fb43dbea72
-      --password=/shared/openethereum-dev-pw
-      --jsonrpc-server-threads=8
-
-    # Passing the --jsonrpc-server-threads argument above made the
-    # bridge end2end tests work, see
-    # https://github.com/trustlines-protocol/blockchain/commit/c821f16c3ec9f54e15fa89f4c8dae6ffa64ded01
+      - ./logs:/logs
+      - ./data/ganache:/data/ganache
+    command:
+      [
+        "--wallet.accounts",
+        "0x5076246bed39923dcad97d901b4dd3bd33d333c0df82b2955382c7458afaa397,100000000000000000000000", # 0xD55685944D873132F59311e3e7d41950E0376f64
+        "0xca479cce7e1fceecbc26a993e18725d1989f3288d1d4da8db6cde25129410e67,100000000000000000000000", # 0xAf35760Ffaa13D4eFDF411F08d35F703ca44E345
+        "--miner.blockTime",
+        "0",
+        "--server.host",
+        "0.0.0.0",
+      ]
 
   contracts:
     image: ${TL_CONTRACTS_IMAGE:-trustlines/contracts}
-    command: ["test", "--file", "/shared/addresses.json", "--jsonrpc", "http://openethereum:8545", "--gas-price", "0"]
+    command: ["test", "--file", "/shared/addresses.json", "--jsonrpc", "http://node:8545", "--gas-price", "1065625000", "--keystore", "/shared/keystore/key", "--password", "test"]
     container_name: contracts
     depends_on:
-      - openethereum
+      - node
     volumes:
       - shared:/shared
       - type: volume
@@ -128,9 +131,9 @@ services:
           nocopy: false
     networks:
       - internal
+
   e2e:
     image: ${TL_E2E_IMAGE:-trustlines/e2e}
-
     container_name: e2e
     networks:
       - internal
@@ -138,6 +141,66 @@ services:
       - relay
     volumes:
       - shared:/clientlib/tests/e2e-config
+
+  nginx:
+    image: nginx:1.21-alpine
+    hostname: nginx
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./docker/gnosis-relay-service/nginx/safe_service.conf:/etc/nginx/nginx.conf:ro
+      - nginx-shared:/nginx
+    depends_on:
+      - safe-relay-service
+    networks:
+      - internal
+
+  redis:
+    image: redis:5-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - internal
+
+  safe-relay-service:
+    image: safe-relay-service-web
+    env_file:
+      - .env.local.relay-service
+    depends_on:
+      - node
+      - db
+      - redis
+    working_dir: /app
+    ports:
+      - "8888:8888"
+    volumes:
+      - nginx-shared:/nginx
+      - ./docker/gnosis-relay-service/web/run_web.sh:/docker/web/run_web.sh
+    command: /docker/web/run_web.sh
+    networks:
+      - internal
+
+  worker:
+    image: safe-relay-service-worker
+    env_file:
+      - .env.local.relay-service
+    depends_on:
+      - db
+      - redis
+    networks:
+      - internal
+    command: docker/web/celery/worker/run.sh
+
+  scheduler:
+    image: safe-relay-service-scheduler
+    env_file:
+      - .env.local.relay-service
+    depends_on:
+      - db
+      - redis
+    networks:
+      - internal
+    command: docker/web/celery/scheduler/run.sh
 
 networks:
   internal:
@@ -147,3 +210,5 @@ networks:
 volumes:
   abi:
   shared:
+  nginx-shared:
+  logs:
