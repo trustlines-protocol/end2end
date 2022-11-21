@@ -11,7 +11,7 @@ python manage.py setup_service
 
 echo "==> $(date +%H:%M:%S) ==> Collecting statics... "
 DOCKER_SHARED_DIR=/nginx
-rm -rf $DOCKER_SHARED_DIR/*
+rm -rf "${DOCKER_SHARED_DIR/*/}"
 # STATIC_ROOT=$DOCKER_SHARED_DIR/staticfiles python manage.py collectstatic --noinput &
 cp -r staticfiles/ $DOCKER_SHARED_DIR/
 

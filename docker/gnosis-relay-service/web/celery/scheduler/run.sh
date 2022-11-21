@@ -3,10 +3,10 @@
 set -euo pipefail
 
 # DEBUG set in .env
-if [ ${DEBUG:-0} = 1 ]; then
-    log_level="DEBUG"
+if [ "${DEBUG:-0}" = 1 ]; then
+  log_level="DEBUG"
 else
-    log_level="INFO"
+  log_level="INFO"
 fi
 
 sleep 10

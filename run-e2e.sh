@@ -215,5 +215,3 @@ else
   sleep 5
   docker-compose logs -t -f node index relay nginx safe-relay-service worker scheduler
 fi
-
-
