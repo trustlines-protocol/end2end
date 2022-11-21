@@ -78,8 +78,8 @@ unset PGHOST PGUSER POSTGRES_USER PGDATABASE PGPASSWORD POSTGRES_PASSWORD
 
 docker-compose up --no-start
 docker-compose up helper
-docker cp openethereum-dev-pw e2e-helper:/shared
-docker-compose up -d postgres openethereum
+docker cp keys e2e-helper:/shared/keystore
+docker-compose up -d db node
 
 sleep 5
 docker-compose up contracts
@@ -111,6 +111,10 @@ EOF
 fi
 
 cat >${relay_config} <<EOF
+[account]
+keystore_path = "/shared/keystore/key"
+keystore_password_path = "/shared/keystore/password"
+
 [relay]
 addresses_filepath = "/shared/addresses.json"
 
@@ -129,7 +133,7 @@ enable = true
 enable = true
 
 [node_rpc]
-host = "openethereum"
+host = "node"
 port = 8545
 use_ssl = false
 
@@ -150,19 +154,29 @@ enable = true
 enable = true
 enable_deploy_identity = true
 
+[logging]
+level = "DEBUG"
+
+[logging.loggers."signing_middleware"]
+level = "DEBUG"
+
 $delegation_fee_option
 EOF
 
 rm -f $address_file
 
 docker cp config.toml e2e-helper:/shared
+docker cp node.log e2e-helper:/shared
+
 docker-compose up createtables
 docker-compose up init
 docker-compose up -d index relay
 
+docker-compose up -d nginx safe-relay-service worker scheduler
+
 if [[ ${only_backend} -eq 0 ]]; then
   sleep 3
-  docker-compose logs -t -f openethereum index relay e2e &
+  docker-compose logs -t -f node index relay e2e &
   if [[ ${use_local_yarn} -eq 0 ]]; then
     docker-compose up -d e2e
     docker_wait_output=$(docker wait e2e)
@@ -199,5 +213,5 @@ else
   echo "====================================================="
   echo
   sleep 5
-  docker-compose logs -t -f openethereum index relay
+  docker-compose logs -t -f node index relay nginx safe-relay-service worker scheduler
 fi
