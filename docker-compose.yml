@@ -94,6 +94,7 @@ services:
 
   node:
     image: trufflesuite/ganache:latest
+    container_name: node
     restart: always
     networks:
       - internal
