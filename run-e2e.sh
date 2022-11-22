@@ -172,11 +172,14 @@ docker-compose up createtables
 docker-compose up init
 docker-compose up -d index relay
 
+docker cp ./docker/gnosis-relay-service/web/run_web.sh safe-relay-service:/app/docker/web/run_web.sh
+docker cp ./docker/gnosis-relay-service/nginx/safe_service.conf nginx:/etc/nginx/nginx.conf
+
 docker-compose up -d nginx safe-relay-service worker scheduler
 
 if [[ ${only_backend} -eq 0 ]]; then
   sleep 3
-  docker-compose logs -t -f node index relay e2e &
+  docker-compose logs -t -f node index relay nginx safe-relay-service worker scheduler &
   if [[ ${use_local_yarn} -eq 0 ]]; then
     docker-compose up -d e2e
     docker_wait_output=$(docker wait e2e)
