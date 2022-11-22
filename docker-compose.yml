@@ -144,11 +144,11 @@ services:
 
   nginx:
     image: nginx:1.21-alpine
+    container_name: nginx
     hostname: nginx
     ports:
       - "8001:8000"
     volumes:
-      - ./docker/gnosis-relay-service/nginx/safe_service.conf:/etc/nginx/nginx.conf:ro
       - nginx-shared:/nginx
     depends_on:
       - safe-relay-service
@@ -164,19 +164,18 @@ services:
 
   safe-relay-service:
     image: ${TL_SAFE_RELAY_SERVICE_IMAGE}
+    container_name: safe-relay-service
     env_file:
       - .env.local.relay-service
     depends_on:
       - node
       - db
       - redis
-    working_dir: /app
     ports:
       - "8888:8888"
     volumes:
       - nginx-shared:/nginx
-      - ./docker/gnosis-relay-service/web/run_web.sh:/docker/web/run_web.sh
-    command: /docker/web/run_web.sh
+    command: /app/docker/web/run_web.sh
     networks:
       - internal
 
