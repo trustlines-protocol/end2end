@@ -21,22 +21,22 @@ distlib==0.3.1
     # via virtualenv
 filelock==3.0.12
     # via virtualenv
-flake8-string-format==0.3.0
-    # via -r dev-requirements.in
 flake8==3.8.3
     # via
     #   -r dev-requirements.in
     #   flake8-string-format
+flake8-string-format==0.3.0
+    # via -r dev-requirements.in
 identify==1.5.2
     # via pre-commit
 mccabe==0.6.1
     # via flake8
+mypy==0.782
+    # via -r dev-requirements.in
 mypy-extensions==0.4.3
     # via
     #   black
     #   mypy
-mypy==0.782
-    # via -r dev-requirements.in
 nodeenv==1.5.0
     # via pre-commit
 pathspec==0.8.0
@@ -76,7 +76,7 @@ typing-extensions==3.7.4.3
     #   mypy
 virtualenv==20.0.31
     # via pre-commit
-wheel==0.35.1
+wheel==0.38.1
     # via -r dev-requirements.in
 
 # The following packages are considered to be unsafe in a requirements file:
